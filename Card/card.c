@@ -68,14 +68,19 @@ EN_cardError_t getCardPAN(ST_cardData_t *cardData){
 	/*
 	 This function will ask for the card's Primary Account Number (PAN) and store it in card data
 	*/
+	int checkSum = 0
 	
 	printf("Enter your PAN: ");
 	fflush(stdout); fflush(stdin);
 	gets(cardData->primaryAccountNumber);
 	
+	if()
+		checkSum = 1;
+
 	if (cardData->primaryAccountNumber == NULL || 
 	strlen(cardData->primaryAccountNumber) > 19 ||
-	strlen(cardData->primaryAccountNumber) < 16)  
+	strlen(cardData->primaryAccountNumber) < 16 ||
+	checkSum == 0)  
 		return WRONG_PAN;
 		
 	return CARD_OK;
