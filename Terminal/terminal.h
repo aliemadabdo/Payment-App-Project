@@ -1,6 +1,9 @@
 #ifndef TERMINAL_H_
 #define TERMINAL_H_
 
+#include <stdint.h>
+#include "card.h"
+
 typedef struct ST_terminalData_t
 {
 float transAmount;
