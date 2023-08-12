@@ -10,7 +10,7 @@ EN_cardError_t getCardHolderName(ST_cardData_t *cardData){
 	*/
 	
 	printf("Enter your name: ");
-	fflush(stdout);
+	fflush(stdout); fflush(stdin);
 	gets(cardData->cardHolderName);
 	//fgets: provides better protection against buffer overflows
 	
@@ -30,7 +30,7 @@ EN_cardError_t getCardExpiryDate(ST_cardData_t *cardData){
 	int month = 0, year = 0, slash = 0 , nulll = 0;
 	
 	printf("Enter card expiry date MM/YY: ");
-	fflush(stdout);
+	fflush(stdout); fflush(stdin);
 	scanf("%s",cardData->cardExpirationDate);
 	
 	#define exp cardData->cardExpirationDate  //just to simple writing the code
@@ -63,3 +63,21 @@ EN_cardError_t getCardExpiryDate(ST_cardData_t *cardData){
 	
 	return WRONG_EXP_DATE;
 }
+
+EN_cardError_t getCardPAN(ST_cardData_t *cardData){
+	/*
+	 This function will ask for the card's Primary Account Number (PAN) and store it in card data
+	*/
+	
+	printf("Enter your PAN: ");
+	fflush(stdout); fflush(stdin);
+	gets(cardData->primaryAccountNumber);
+	
+	if (cardData->primaryAccountNumber == NULL || 
+	strlen(cardData->primaryAccountNumber) > 19 ||
+	strlen(cardData->primaryAccountNumber) < 16)  
+		return WRONG_PAN;
+		
+	return CARD_OK;
+}
+

@@ -14,6 +14,10 @@ int main(void){
 		printf("\nInvalid expireation date.\nPlease, enter a date like this format MM/YY \n");		
 	}
 	
+	while( getCardPAN(&cardData) == WRONG_PAN){
+		printf("\nInvalid PAN .\nPlease, enter a PAN between 16 to 19 characters \n");		
+	}
+	
 	printf("Exit Program. \n");
 	
 	return 0;
