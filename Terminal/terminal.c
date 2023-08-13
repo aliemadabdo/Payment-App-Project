@@ -35,7 +35,7 @@ EN_terminalError_t getTransactionDate(ST_terminalData_t *termData){
 	if (tdate[10] == '\0')											/*check for max string length = 5*/
 		nulll = 1;
 
-	printf("REAL TIME DATE: %s\n", __DATE__);
+//	printf("REAL TIME DATE: %s\n", __DATE__);
 
 //	getRealDate(termData);
 	
