@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <string.h>
+#include <float.h>
+#include <stdlib.h>
 #include "terminal.h"
 
 EN_terminalError_t getTransactionDate(ST_terminalData_t *termData){
@@ -32,14 +34,15 @@ EN_terminalError_t getTransactionDate(ST_terminalData_t *termData){
 		
 	if (tdate[10] == '\0')											/*check for max string length = 5*/
 		nulll = 1;
-	
-	printf("\nday: %d month: %d slash: %d year: %d nulll: %d \n",day,month,slash,year,nulll);
+
 	printf("REAL TIME DATE: %s\n", __DATE__);
 
 //	getRealDate(termData);
 	
 	if (day && month && year && slash && nulll)
 		return TERMINAL_OK;
+	
+	printf("\nday: %d month: %d slash: %d year: %d nulll: %d \n",day,month,slash,year,nulll);
 	
 	return WRONG_DATE;
 }
@@ -90,7 +93,8 @@ void getRealDate(ST_terminalData_t *termData){
 
 EN_terminalError_t isCardExpired(ST_cardData_t *cardData, ST_terminalData_t *termData){
 	
-	if ( strncmp(cardData->cardExpirationDate+3 ,termData->transactionDate+8 ,2) > 0 )
+	//str(n)cmp just compares the specified length of the two strings
+	if ( strncmp(cardData->cardExpirationDate+3 ,termData->transactionDate+8 ,2) > 0 ) 
 		return TERMINAL_OK;
 	else if ( strncmp(cardData->cardExpirationDate+3 ,termData->transactionDate+8 ,2) == 0 ){
 		if ( strncmp(cardData->cardExpirationDate ,termData->transactionDate+3 ,2) >= 0 )
@@ -98,4 +102,45 @@ EN_terminalError_t isCardExpired(ST_cardData_t *cardData, ST_terminalData_t *ter
 	}
 	
 	return EXPIRED_CARD;
+}
+
+EN_terminalError_t getTransactionAmount(ST_terminalData_t *termData){
+	/*
+	 This function will ask for transaction amount and store it into card data 
+	*/
+	
+	char check_amount[32] ;
+	int dot = 0; //dot flag
+	
+	printf("Enter transaction amount: ");
+	fflush(stdout); fflush(stdin);
+	scanf("%s", check_amount);           /*To Do : Accept float formula like this 3.402823e+38 */
+	
+	//check if valid value
+	for (int i = 0; i<strlen(check_amount); i++){
+		
+		//dot check
+		if ( (check_amount[i] == '.') && (i != 0) && (i != strlen(check_amount)-1) ){
+			if (dot == 0)	//check dot flag
+				dot = 1;	// dot flag is up
+			else
+				return INVALID_AMOUNT;	//as '.' is valid for only one appearance (but not at start or end)
+			
+			continue; // to escape from numarical check below
+		}
+		
+		//numarical check
+		if( (check_amount[i] < '0') || (check_amount[i] > '9') )
+			return INVALID_AMOUNT;
+	}
+
+	termData->transAmount = atof(check_amount);
+	
+	printf("\nYou entered: %f \n",termData->transAmount);
+	
+	// check for positive none-zero value compatible with 4-byte float upper bound 
+	if ( (termData->transAmount <= 0) || (termData->transAmount >= FLT_MAX) )
+		return INVALID_AMOUNT;
+
+	return TERMINAL_OK;
 }
