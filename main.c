@@ -3,6 +3,8 @@
 #include "card.h"
 #include "terminal.h"
 
+#define MAX_AMOUNT 1000000 //1M
+
 /* NOTE!! 
    Date constrains for this payment system as follows:
 	MAX date : 31/12/2029
@@ -29,11 +31,17 @@ int main(void){
 	}
 	
 	if( isCardExpired(&cardData, &termData) == EXPIRED_CARD){
-		printf("\nCard is expired.\n");		
+		printf("\nCARD EXPIRED.\n");		
 	} */
 	
-	if( getTransactionAmount(&termData) == INVALID_AMOUNT){
-		printf("\nINVALID AMOUNT.\n");		
+	while( getTransactionAmount(&termData) == INVALID_AMOUNT){
+		printf("\nINVALID AMOUNT. Please, enter a valid numaric positive non-zero value \n");		
+	} 
+	
+	setMaxAmount(&termData,MAX_AMOUNT);
+	
+	if ( isBelowMaxAmount(&termData) == EXCEED_MAX_AMOUNT){
+		printf("\nMAX AMOUNT EXCEEDED\n");		
 	} 
 	
 	printf("\nExit Program. \n");

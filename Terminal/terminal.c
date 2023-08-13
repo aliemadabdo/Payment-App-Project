@@ -6,7 +6,7 @@
 
 EN_terminalError_t getTransactionDate(ST_terminalData_t *termData){
 	/*
-	 This function will ask for cardholder's name and store it into card data 
+	 This function will ask for cardholder's name and store it into terminal data 
 	*/
 	
 	int day = 0, month = 0, year = 0, slash = 0 , nulll = 0;
@@ -92,6 +92,9 @@ void getRealDate(ST_terminalData_t *termData){
 }
 
 EN_terminalError_t isCardExpired(ST_cardData_t *cardData, ST_terminalData_t *termData){
+	/*
+	 This function compares card expiry date with the transaction date 
+	*/
 	
 	//str(n)cmp just compares the specified length of the two strings
 	if ( strncmp(cardData->cardExpirationDate+3 ,termData->transactionDate+8 ,2) > 0 ) 
@@ -106,7 +109,7 @@ EN_terminalError_t isCardExpired(ST_cardData_t *cardData, ST_terminalData_t *ter
 
 EN_terminalError_t getTransactionAmount(ST_terminalData_t *termData){
 	/*
-	 This function will ask for transaction amount and store it into card data 
+	 This function will ask for transaction amount and store it into terminal data 
 	*/
 	
 	char check_amount[32] ;
@@ -116,7 +119,7 @@ EN_terminalError_t getTransactionAmount(ST_terminalData_t *termData){
 	fflush(stdout); fflush(stdin);
 	scanf("%s", check_amount);           /*To Do : Accept float formula like this 3.402823e+38 */
 	
-	//check if valid value
+	//ADDITIONAL FEATURE: check if valid value
 	for (int i = 0; i<strlen(check_amount); i++){
 		
 		//dot check
@@ -133,7 +136,8 @@ EN_terminalError_t getTransactionAmount(ST_terminalData_t *termData){
 		if( (check_amount[i] < '0') || (check_amount[i] > '9') )
 			return INVALID_AMOUNT;
 	}
-
+	/*END OF ADDITIONAL FEATURE*/
+	
 	termData->transAmount = atof(check_amount);
 	
 	printf("\nYou entered: %f \n",termData->transAmount);
@@ -144,3 +148,37 @@ EN_terminalError_t getTransactionAmount(ST_terminalData_t *termData){
 
 	return TERMINAL_OK;
 }
+
+
+EN_terminalError_t setMaxAmount(ST_terminalData_t *termData, float maxAmount){
+	/*
+	 This function takes the maximum allowed amount and store it into terminal data 
+	*/
+	
+	if (maxAmount <= 0)
+		return INVALID_MAX_AMOUNT;
+	
+	termData->maxTransAmount = maxAmount;
+	
+	return TERMINAL_OK;
+}
+
+EN_terminalError_t isBelowMaxAmount(ST_terminalData_t *termData){
+	/*
+	 This function compares transaction amount with the terminal maximum allowed transaction amount 
+	*/
+	
+	if (termData->transAmount > termData->maxTransAmount)
+		return EXCEED_MAX_AMOUNT;
+	
+	return TERMINAL_OK;
+	
+}
+
+EN_terminalError_t isValidCardPAN(ST_cardData_t *cardData){   // Optional
+	/*
+	 This function will check if the PAN is a luhn number or not
+	*/
+	return WRONG_PAN;
+} 
+
