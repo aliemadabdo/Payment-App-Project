@@ -27,7 +27,7 @@ EN_terminalError_t getTransactionDate(ST_terminalData_t *termData){
 	if ((tdate[2] == '/') && (tdate[5] == '/'))											/*check front slash*/
 		slash = 1;
 	
-	if (strncmp(tdate + 6, "2023", 4) == 0)
+	if ( (strncmp(tdate + 6, "202", 3) == 0) && (tdate[9] >= '3') && (tdate[9] <= '9') )
 		year = 1;
 		
 	if (tdate[10] == '\0')											/*check for max string length = 5*/
@@ -35,7 +35,8 @@ EN_terminalError_t getTransactionDate(ST_terminalData_t *termData){
 	
 	printf("\nday: %d month: %d slash: %d year: %d nulll: %d \n",day,month,slash,year,nulll);
 	printf("REAL TIME DATE: %s\n", __DATE__);
-	getRealDate(termData);
+
+//	getRealDate(termData);
 	
 	if (day && month && year && slash && nulll)
 		return TERMINAL_OK;
@@ -49,7 +50,7 @@ void getRealDate(ST_terminalData_t *termData){
 	 with the mentioned size and format (DD/MM/YYYY)
 	*/
 	printf("The real date (formated):\n");
-	strncpy(termData->transactionDate+6, __DATE__+7,4); //set year
+	strncpy(termData->transactionDate+6, __DATE__+7, 4); //set year
 	termData->transactionDate[0] = __DATE__[4]; //set day 
 	termData->transactionDate[1] = __DATE__[5]; //set day
 	termData->transactionDate[2] = '/';
@@ -89,5 +90,12 @@ void getRealDate(ST_terminalData_t *termData){
 
 EN_terminalError_t isCardExpired(ST_cardData_t *cardData, ST_terminalData_t *termData){
 	
+	if ( strncmp(cardData->cardExpirationDate+3 ,termData->transactionDate+8 ,2) > 0 )
+		return TERMINAL_OK;
+	else if ( strncmp(cardData->cardExpirationDate+3 ,termData->transactionDate+8 ,2) == 0 ){
+		if ( strncmp(cardData->cardExpirationDate ,termData->transactionDate+3 ,2) >= 0 )
+			return TERMINAL_OK;
+	}
 	
+	return EXPIRED_CARD;
 }
